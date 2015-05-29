@@ -328,6 +328,19 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var shuffled = Array.prototype.slice.call(array);
+
+    //Basic FYS
+    for ( var i = shuffled.length - 1; i > 0; i--) {
+      var ri = Math.floor(Math.random() * i);
+      console.log(ri);
+      var temp = shuffled[i]; //Store current element
+      shuffled[i] = shuffled[ri] //Set current element to the randomly picked one
+      shuffled[ri] = temp; //Set randomly picked element to current one.
+    }
+
+    console.log(shuffled);
+    return shuffled;
   };
 
 
