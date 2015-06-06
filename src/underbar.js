@@ -280,15 +280,7 @@
     var results = {};
 
     return function() {
-      //Novice guess.
-      //var key = Array.prototype.slice.call(arguments);
-
-      //Using Underscore, too easy?
-      //var key = _.toArray(arguments);
-
-      var key = _.identity.apply(this, arguments);
-
-      return (key in results) ? results[key] : (results[key] = func.apply(this, arguments));
+      return (arguments[0] in results) ? results[arguments[0]] : (results[arguments[0]] = func.apply(this, arguments));
     };
   };
 
