@@ -177,8 +177,7 @@
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
 
-    if (typeof iterator !== 'function') { iterator = _.identity }
-
+    if (typeof iterator !== 'function') { iterator = _.identity; }
 
     return !!_.reduce(collection, function(memo, val, index, coll){ return memo && iterator(val, index, coll); }, true );
   };
@@ -188,7 +187,9 @@
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
 
-    if (!iterator || typeof(iterator) != 'function') { iterator = function(val, index, coll){ return true && val; }}
+    //Clever way to reuse every()? Wha?
+
+    if (typeof iterator !== 'function') { iterator = _.identity; }
 
     return !!_.reduce(collection, function(memo, val, index, coll){ return memo || iterator(val, index, coll); }, false );
   };
