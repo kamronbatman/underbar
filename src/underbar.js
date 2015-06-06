@@ -47,7 +47,7 @@
   // Note: _.each does not have a return value, but rather simply runs the
   // iterator function over each item in the input collection.
   _.each = function(collection, iterator) {
-    if (collection.length) {
+    if (Array.isArray(collection)) {
       for (var i = 0; i < collection.length; i++) {
         iterator(collection[i],i,collection);
       }
@@ -94,15 +94,9 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array) {
-    var unique = [];
-
-    _.each(array, function(val, index, array) {
-      if (!_.contains(unique, val)) {
-        unique.push(val);
-      }
-    });
-
-    return unique;
+	return _.reduce(array, function(memo, value){
+		if (_.indexOf(memo,value) === -1) { memo.push(value); }
+		return memo; }, []);
   };
 
 
@@ -158,7 +152,7 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
-    var hasAcc = arguments.length > 2 && accumulator != null; //Do we check for accumulator is defined instead?
+    var hasAcc = accumulator !== undefined;
     _.each(collection, function(val, index, coll) {
       if (!hasAcc) {
         accumulator = val;
@@ -183,11 +177,8 @@
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
 
-    //Did I do this correctly???? I had to use "!!" as a coercsion technique.
-    //https://javascriptweblog.wordpress.com/2011/02/07/truth-equality-and-javascript/
-    //This is confusing and without !!, it doesn't work.
+    if (typeof iterator !== 'function') { iterator = _.identity }
 
-    if (!iterator || typeof(iterator) != 'function') { iterator = function(val, index, coll){ return true && val; }}
 
     return !!_.reduce(collection, function(memo, val, index, coll){ return memo && iterator(val, index, coll); }, true );
   };
@@ -221,15 +212,12 @@
   //   }, {
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
+
   _.extend = function(obj) {
-    //obj = arguments
-    var extended = arguments[0];
-
-    for (var i = 1; i < arguments.length; i++) {
-      _.each(arguments[i], function(val, key, coll){ extended[key] = val; })
-    }
-
-    return extended;
+    return _.reduce(Array.prototype.slice.call(arguments, 1), function(memo, value){
+    	_.each(value, function(value, key, coll){ memo[key] = value; });
+    	return memo;
+    }, obj);
   };
 
   // Like extend, but doesn't ever overwrite a key that already
@@ -333,13 +321,12 @@
     //Basic FYS
     for ( var i = shuffled.length - 1; i > 0; i--) {
       var ri = Math.floor(Math.random() * i);
-      console.log(ri);
+
       var temp = shuffled[i]; //Store current element
       shuffled[i] = shuffled[ri] //Set current element to the randomly picked one
       shuffled[ri] = temp; //Set randomly picked element to current one.
     }
 
-    console.log(shuffled);
     return shuffled;
   };
 
