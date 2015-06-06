@@ -308,9 +308,22 @@
   // TIP: This function's test suite will ask that you not modify the original
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
+
   _.shuffle = function(array) {
     var shuffled = Array.prototype.slice.call(array);
 
+    _.each(shuffled, function(value,index,list){
+      if (index < list.length-1)
+      {
+        var ri = (index + 1) + Math.floor(length - index * Math.random());
+
+        var temp = list[index];
+        list[index] = list[ri];
+        list[ri] = temp;
+      }
+    });
+
+    /*
     //Basic FYS
     for ( var i = shuffled.length - 1; i > 0; i--) {
       var ri = Math.floor(Math.random() * i);
@@ -319,6 +332,7 @@
       shuffled[i] = shuffled[ri] //Set current element to the randomly picked one
       shuffled[ri] = temp; //Set randomly picked element to current one.
     }
+    */
 
     return shuffled;
   };
