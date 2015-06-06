@@ -94,10 +94,10 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array) {
-	return _.reduce(array, function(memo, value){
-		if (_.indexOf(memo,value) === -1) { memo.push(value); }
-		return memo; }, []);
-  };
+   return _.reduce(array, function(memo, value){
+    if (_.indexOf(memo,value) === -1) { memo.push(value); }
+    return memo; }, []);
+ };
 
 
   // Return the results of applying an iterator to each element.
@@ -216,24 +216,16 @@
 
   _.extend = function(obj) {
     return _.reduce(Array.prototype.slice.call(arguments, 1), function(memo, value){
-    	_.each(value, function(value, key, coll){ memo[key] = value; });
-    	return memo;
-    }, obj);
+      _.each(value, function(value, key, coll){ memo[key] = value; });
+      return memo; }, obj);
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
-
-    //obj = arguments
-    var extended = arguments[0];
-
-    for (var i = 1; i < arguments.length; i++) {
-      _.each(arguments[i], function(val, key, coll){ extended[key] = (typeof(extended[key]) === 'undefined' ? val : extended[key]); })
-    }
-
-    return extended;
-
+    return _.reduce(Array.prototype.slice.call(arguments, 1), function(memo, value){
+      _.each(value, function(value, key, coll){ if (!(key in memo)) { memo[key] = value; } } );
+      return memo; }, obj);
   };
 
 
@@ -323,19 +315,19 @@
       }
     });
 
-    /*
-    //Basic FYS
-    for ( var i = shuffled.length - 1; i > 0; i--) {
-      var ri = Math.floor(Math.random() * i);
+  /*
+  //Basic FYS
+  for ( var i = shuffled.length - 1; i > 0; i--) {
+  var ri = Math.floor(Math.random() * i);
 
-      var temp = shuffled[i]; //Store current element
-      shuffled[i] = shuffled[ri] //Set current element to the randomly picked one
-      shuffled[ri] = temp; //Set randomly picked element to current one.
-    }
-    */
+  var temp = shuffled[i]; //Store current element
+  shuffled[i] = shuffled[ri] //Set current element to the randomly picked one
+  shuffled[ri] = temp; //Set randomly picked element to current one.
+  }
+  */
 
-    return shuffled;
-  };
+  return shuffled;
+};
 
 
   /**
