@@ -152,12 +152,13 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+  	//We do the logic outside of the callback so that the accumulator can be undefined later
+  	//without causing the loop to become destructive by reverting the accumulator back to 'val' erroneously.
     var hasAcc = accumulator !== undefined;
     _.each(collection, function(val, index, coll) {
-      if (!hasAcc) {
-        accumulator = val;
-        hasAcc = true;
-      } else { accumulator = iterator(accumulator, val, index, coll); }
+      if (hasAcc) {
+      	accumulator = iterator(accumulator, val, index, coll);
+      } else { accumulator = val; hasAcc = true; }
     });
 
     return accumulator;
@@ -271,8 +272,8 @@
   _.memoize = function(func) {
     var results = {};
 
-    return function() {
-      return (arguments[0] in results) ? results[arguments[0]] : (results[arguments[0]] = func.apply(this, arguments));
+    return function(key) {
+      return (key in results) ? results[key] : (results[key] = func.apply(this, arguments));
     };
   };
 
