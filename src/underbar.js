@@ -216,17 +216,25 @@
   //   }); // obj1 now contains key1, key2, key3 and bla
 
   _.extend = function(obj) {
-    return _.reduce(Array.prototype.slice.call(arguments, 1), function(memo, value){
-      _.each(value, function(value, key, coll){ memo[key] = value; });
-      return memo; }, obj);
+    _.each(Array.prototype.slice.call(arguments, 1), function(value){
+      _.each(value, function(val, key){
+        obj[key] = val;
+      });
+    });
+
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
-    return _.reduce(Array.prototype.slice.call(arguments, 1), function(memo, value){
-      _.each(value, function(value, key, coll){ if (!(key in memo)) { memo[key] = value; } } );
-      return memo; }, obj);
+    _.each(Array.prototype.slice.call(arguments, 1), function(value){
+      _.each(value, function(val, key){
+        if (!(key in obj)) { obj[key] = val; }
+      });
+    });
+
+    return obj;
   };
 
 
