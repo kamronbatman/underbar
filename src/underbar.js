@@ -77,11 +77,7 @@
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
-    var filtered = [];
-
-    _.each(collection, function(element, index, coll){ if (test(element)) { filtered.push(element); } })
-
-    return filtered;
+    return _.reduce(collection, function(memo, val){ if (test(val)) { memo.push(val); } return memo; }, [])
   };
 
   // Return all elements of an array that don't pass a truth test.
@@ -192,7 +188,7 @@
 
     if (typeof iterator !== 'function') { iterator = _.identity; }
 
-    return !!_.reduce(collection, function(memo, val, index, coll){ return memo || iterator(val, index, coll); }, false );
+    return !_.every(collection, function(val){ return !iterator(val); });
   };
 
 
@@ -293,9 +289,10 @@
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
 
-    var args = Array.prototype.slice.call(arguments);
+    //var args = ;
+    //Have to make a variable "args" becuase arguments will refer to function() where it is empty.
 
-    setTimeout(function(){ func.apply(this,args.slice(2)); }, wait);
+    setTimeout(function(args){ func.apply( this, args ); }, wait, Array.prototype.slice.call(arguments, 2));
   };
 
 
