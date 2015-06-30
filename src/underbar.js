@@ -243,17 +243,17 @@
     // TIP: These variables are stored in a "closure scope" (worth researching),
     // so that they'll remain available to the newly-generated function every
     // time it's called.
-    var alreadyCalled = false;
+    var notCalled = true;
     var result;
 
     // TIP: We'll return a new function that delegates to the old one, but only
     // if it hasn't been called before.
     return function() {
-      if (!alreadyCalled) {
+      if (notCalled) {
         // TIP: .apply(this, arguments) is the standard way to pass on all of the
         // information from one function call to another.
         result = func.apply(this, arguments);
-        alreadyCalled = true;
+        notCalled = false;
       }
       // The new function always returns the originally computed result.
       return result;
@@ -350,7 +350,6 @@
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
   		return collection.sort(function(a, b){
-
  			if (a === undefined && b === undefined) { return 0; }
   			if (a === undefined) { return 1; }
   			if (b === undefined) { return -1; }
@@ -364,7 +363,7 @@
   			}
 
   			return (_a < _b) ? -1 : (_a > _b) ? 1 : 0;
-  		})
+  		});
   };
 
   // Zip together two or more arrays with elements of the same index
@@ -406,11 +405,11 @@
 
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
-  _.intersection = function() {
-  	var argList = Array.prototype.slice.call(arguments);
-  	var allVals = _.uniq(_.flatten(arguments));
+  _.intersection = function(array) {
+  	var first = _.uniq(array);
+  	var argList = Array.prototype.slice.call(arguments, 1);
 
-  	return _.reduce(allVals, function(memo, val){
+  	return _.reduce(first, function(memo, val){
   		if (_.every(argList, function(argval){
   			return _.indexOf(argval, val) >= 0;
   		})) { memo.push(val); }
@@ -422,9 +421,10 @@
   // Take the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
   _.difference = function(array) {
+  	var first = _.uniq(array);
   	var argList = Array.prototype.slice.call(arguments, 1); //all other arrays
 
-  	return _.reduce(array, function(memo, val){
+  	return _.reduce(first, function(memo, val){
   		if (!_.some(argList, function(argval){
   			return _.indexOf(argval, val) >= 0;
   		})) { memo.push(val); }
@@ -439,13 +439,13 @@
   //
   // Note: This is difficult! It may take a while to implement.
   _.throttle = function(func, wait) {
-    var results = {};
+    var throttled = {};
 
     return function(key) {
-    	if (results[key] !== "throttled") {
-    		results[key] = "throttled";
+    	if (throttled[key] !== "throttled") {
+    		throttled[key] = "throttled";
     		func.apply(this, arguments);
-    		_.delay(function(){ results[key] = undefined; }, wait);
+    		_.delay(function(){ throttled[key] = undefined; }, wait);
     	}
     };
   };
