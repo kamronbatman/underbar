@@ -221,7 +221,8 @@
   _.defaults = function(obj) {
     _.each(Array.prototype.slice.call(arguments, 1), function(value){
       _.each(value, function(val, key){
-        if (!(key in obj)) { obj[key] = val; }
+      	//Solution provided by Alex.
+        !(key in obj) && (obj[key] = val);
       });
     });
 
@@ -312,17 +313,6 @@
       }
     });
 
-  /*
-  //Basic FYS
-  for ( var i = shuffled.length - 1; i > 0; i--) {
-  var ri = Math.floor(Math.random() * i);
-
-  var temp = shuffled[i]; //Store current element
-  shuffled[i] = shuffled[ri] //Set current element to the randomly picked one
-  shuffled[ri] = temp; //Set randomly picked element to current one.
-  }
-  */
-
   return shuffled;
 };
 
@@ -350,10 +340,6 @@
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
   		return collection.sort(function(a, b){
- 			if (a === undefined && b === undefined) { return 0; }
-  			if (a === undefined) { return 1; }
-  			if (b === undefined) { return -1; }
-
   			if (typeof iterator === 'string') {
 	 			var _a = a[iterator];
 				var _b = b[iterator];
@@ -439,14 +425,14 @@
   //
   // Note: This is difficult! It may take a while to implement.
   _.throttle = function(func, wait) {
-    var throttled = {};
+    var notCalled = true;
 
-    return function(key) {
-    	if (throttled[key] !== "throttled") {
-    		throttled[key] = "throttled";
-    		func.apply(this, arguments);
-    		_.delay(function(){ throttled[key] = undefined; }, wait);
-    	}
+    return function() {
+      if (notCalled) {
+        func.apply(this, arguments);
+        notCalled = false;
+        _.delay(function(){ notCalled = true; }, wait);
+      }
     };
   };
 }());
